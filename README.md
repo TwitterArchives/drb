@@ -1,93 +1,125 @@
-# Robofinder
+<h1 align="center">RoboFinder</h1>
 
-**Robofinder** is a powerful Python script designed to search for and retrieve historical `robots.txt` files from Archive.org for any given website. This tool is ideal for security researchers, web archivists, and penetration testers to uncover previously accessible paths or directories that were listed in a site's `robots.txt`.
+<p align="center">
+  Uncover hidden endpoints by mining every historical <code>robots.txt</code> snapshot from the Wayback Machine.
+</p>
 
-## Features
-- Fetch historical `robots.txt` files from Archive.org.
-- Extract and display old paths or directories that were once disallowed or listed.
-- Save results to a specified output file.
-- **Silent Mode** for unobtrusive execution.
-- Multi-threading support for faster processing.
-- Option to concatenate extracted paths with the base URL for easy access.
-- Debug mode for detailed execution logs.
-- Extract old parameters from robots.txt files.
+<p align="center">
+  <a href="https://pypi.org/project/robofinder/"><img src="https://img.shields.io/pypi/v/robofinder?color=blue" alt="PyPI"></a>
+  <a href="https://pypi.org/project/robofinder/"><img src="https://img.shields.io/pypi/dm/robofinder" alt="Downloads"></a>
+  <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Spix0r/robofinder" alt="License"></a>
+  <a href="https://github.com/Spix0r/robofinder/stargazers"><img src="https://img.shields.io/github/stars/Spix0r/robofinder?style=social" alt="Stars"></a>
+</p>
 
-## Installation
+---
 
-### Using `pipx`
-Install Robofinder quickly and securely using `pipx`:
+## Why RoboFinder?
+
+Sites regularly scrub sensitive paths from `robots.txt` — but the **Wayback Machine keeps every version ever crawled**.
+
+RoboFinder queries Archive.org's CDX API to pull *all* historical `robots.txt` snapshots for a target, deduplicates every `Allow`, `Disallow`, and `Sitemap` directive, and prints the full list. Paths that were quietly removed from production may still be alive and reachable.
+
+**Built for:** bug bounty recon · OSINT · attack-surface mapping · forgotten endpoint discovery
+
+---
+
+## Install
+
 ```bash
-pipx install git+https://github.com/Spix0r/robofinder.git
+pip install robofinder
 ```
 
-### Manual Installation
-To install manually:
+<details>
+<summary>Install from source</summary>
+
 ```bash
-git clone https://github.com/Spix0r/robofinder.git
+git clone https://github.com/Spix0r/robofinder
 cd robofinder
-pip install -r requirements.txt
+pip install .
 ```
+</details>
+
+---
+
+## Quick start
+
+```bash
+# Single target
+robofinder -u https://example.com
+
+# Full URLs ready to probe
+robofinder -u https://example.com -c
+
+# Pipe straight into httpx or nuclei
+robofinder -l domains.txt -c | httpx -silent -mc 200
+robofinder -u https://example.com -c | nuclei -t exposures/
+```
+
+---
 
 ## Usage
 
-### Basic Command
-If installed via `pipx`:
-```bash
-robofinder -u https://example.com
+```
+robofinder [-u URL | -l FILE] [options]
 ```
 
-For manual installation:
-```bash
-python3 robofinder.py -u https://example.com
+| Flag | Long form | Default | Description |
+|------|-----------|---------|-------------|
+| `-u` | `--url` | — | Single target URL |
+| `-o` | `--output` | — | Save results to a file |
+| `-t` | `--threads` | `10` | Number of fetch threads |
+| `-r` | `--rate-limit` | `2.0` | Max requests/sec sent to Archive.org |
+| `-c` | | — | Prefix each path with the target URL |
+| `-p` | | — | Extract URL parameters from historical paths |
+| `-s` | `--silent` | — | Suppress the banner |
+| | `--debug` | — | Verbose debug output |
+
+### Scan a list of domains
+
+Create `domains.txt`:
+```
+https://example.com
+https://target.org
+api.example.com
 ```
 
-### Options and Examples
-
-- **Save output to a file**:
-  ```bash
-  robofinder -u https://example.com -o results.txt
-  ```
-
-- **Silent Mode** (minimal output to console):
-  ```bash
-  robofinder -u https://example.com -s
-  ```
-
-- **Concatenate paths with the base URL**:
-  ```bash
-  robofinder -u https://example.com -c
-  ```
-
-- **Extract Paramters**:
-  ```bash
-  robofinder -u https://example.com -p
-  ```
-
-- **Enable Debug Mode**:
-  ```bash
-  robofinder -u https://example.com --debug
-  ```
-
-- **Multi-threading** (default: 10 threads):
-  ```bash
-  robofinder -u https://example.com -t 10
-  ```
-
-### Advanced Usage
-Combine options for tailored execution:
 ```bash
-robofinder -u https://example.com -t 10 -c -o results.txt -s
+robofinder -l domains.txt -o all_paths.txt
 ```
 
-## Example Output
+### Extract forgotten URL parameters
 
-Running Robofinder on `example.com` with 10 threads, silent mode, and saving just the paramters to the `results.txt`:
 ```bash
-robofinder -u https://example.com -t 10 -o results.txt -s -p
+robofinder -u https://example.com -p
+# returns parameter names found in historical paths, e.g.:
+# id
+# token
+# redirect_url
 ```
-
-## Contributing
-
-Contributions are highly welcome! If you have ideas for new features, optimizations, or bug fixes, feel free to submit a Pull Request or open an issue on the [GitHub repository](https://github.com/Mirzadzare/robofinder).
 
 ---
+
+## Rate limiting
+
+RoboFinder ships with a **token-bucket rate limiter** shared across all threads so it never hammers Archive.org.
+
+- Default: **2 req/s** — well within Archive.org's tolerance.
+- On HTTP **429**: exponential back-off (1 s → 2 s → 4 s … max 30 s) with automatic retry.
+- Override with `-r`: use `-r 0.5` to be conservative or `-r 5` on a fast connection.
+
+```bash
+robofinder -u https://example.com -r 1
+```
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## License
+
+[MIT](LICENSE) © [Spix0r](https://github.com/Spix0r)

@@ -5,17 +5,36 @@ build-backend = "hatchling.build"
 [project]
 name = "robofinder"
 version = "0.1.0"
-description = "A tool for finding robots.txt files"
+description = "Extract historical robots.txt paths via Wayback Machine – a recon tool for bug hunters"
 authors = [
-    { name = "Spix0r", email = "0xspidey@proton.me" },
+    { name = "Spix0r", email = "spix0r@tuta.io" },
     { name = "gnomegl" }
 ]
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.8"
+keywords = ["recon", "osint", "bugbounty", "robots", "wayback", "security"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Information Technology",
+    "Topic :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 dependencies = [
     "validators",
-    "requests==2.32.3"
+    "requests>=2.28.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Spix0r/robofinder"
+"Bug Tracker" = "https://github.com/Spix0r/robofinder/issues"
+Changelog = "https://github.com/Spix0r/robofinder/blob/main/CHANGELOG.md"
 
 [project.scripts]
 robofinder = "robofinder.__main__:main"
