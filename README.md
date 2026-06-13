@@ -1,4 +1,4 @@
-<h1 align="center">RoboFinder</h1>
+<h1 align="center">Robofinder</h1>
 
 <p align="center">
   Uncover hidden endpoints by mining every historical <code>robots.txt</code> snapshot from the Wayback Machine.
@@ -14,11 +14,11 @@
 
 ---
 
-## Why RoboFinder?
+## Why Robofinder?
 
 Sites regularly scrub sensitive paths from `robots.txt` — but the **Wayback Machine keeps every version ever crawled**.
 
-RoboFinder queries Archive.org's CDX API to pull *all* historical `robots.txt` snapshots for a target, deduplicates every `Allow`, `Disallow`, and `Sitemap` directive, and prints the full list. Paths that were quietly removed from production may still be alive and reachable.
+Robofinder queries Archive.org's CDX API to pull *all* historical `robots.txt` snapshots for a target, deduplicates every `Allow`, `Disallow`, and `Sitemap` directive, and prints the full list. Paths that were quietly removed from production may still be alive and reachable.
 
 **Built for:** bug bounty recon · OSINT · attack-surface mapping · forgotten endpoint discovery
 
@@ -52,7 +52,7 @@ robofinder -u https://example.com
 robofinder -u https://example.com -c
 
 # Pipe straight into httpx or nuclei
-robofinder -l domains.txt -c | httpx -silent -mc 200
+robofinder -u domains.txt -c | httpx -silent -mc 200
 robofinder -u https://example.com -c | nuclei -t exposures/
 ```
 
@@ -61,19 +61,21 @@ robofinder -u https://example.com -c | nuclei -t exposures/
 ## Usage
 
 ```
-robofinder [-u URL | -l FILE] [options]
+robofinder -u URL [options]
 ```
 
 | Flag | Long form | Default | Description |
 |------|-----------|---------|-------------|
-| `-u` | `--url` | — | Single target URL |
-| `-o` | `--output` | — | Save results to a file |
-| `-t` | `--threads` | `10` | Number of fetch threads |
-| `-r` | `--rate-limit` | `2.0` | Max requests/sec sent to Archive.org |
-| `-c` | | — | Prefix each path with the target URL |
+| `-u` | `--url` | — | Target URL or file with one URL per line |
+| `-o` | `--output` | — | Output to terminal (no value) or save to file (with value) |
+| `-f` | `--format` | `txt` | Output format: `txt`, `json`, or `both` |
+| `-c` | | — | Prefix each path with the target URL (full URLs) |
 | `-p` | | — | Extract URL parameters from historical paths |
+| `-t` | `--threads` | `1` | Number of fetch threads |
+| `-r` | `--rate-limit` | `2.0` | Max requests/sec sent to Archive.org |
+| | `--cooldown` | `10` | Seconds to wait between domains |
 | `-s` | `--silent` | — | Suppress the banner |
-| | `--debug` | — | Verbose debug output |
+| | `--debug` | — | Verbose debug output (goes to stderr) |
 
 ### Scan a list of domains
 
@@ -85,7 +87,20 @@ api.example.com
 ```
 
 ```bash
-robofinder -l domains.txt -o all_paths.txt
+robofinder -u domains.txt -o all_paths.txt
+```
+
+### JSON output with jq
+
+```bash
+# Save to file
+robofinder -u https://example.com -f json -o results
+
+# Pipe to jq
+robofinder -u https://example.com -f json | jq '.["example.com"].paths[]'
+
+# Count paths per domain
+robofinder -u domains.txt -f json | jq 'to_entries[] | "\(.key): \(.value.count) paths"'
 ```
 
 ### Extract forgotten URL parameters
@@ -102,14 +117,16 @@ robofinder -u https://example.com -p
 
 ## Rate limiting
 
-RoboFinder ships with a **token-bucket rate limiter** shared across all threads so it never hammers Archive.org.
+Robofinder ships with a **token-bucket rate limiter** so it never hammers Archive.org.
 
 - Default: **2 req/s** — well within Archive.org's tolerance.
-- On HTTP **429**: exponential back-off (1 s → 2 s → 4 s … max 30 s) with automatic retry.
+- On HTTP **429**: exponential back-off with automatic retry.
+- On timeout/connection errors: retries with backoff (up to 7 attempts).
 - Override with `-r`: use `-r 0.5` to be conservative or `-r 5` on a fast connection.
 
 ```bash
-robofinder -u https://example.com -r 1
+# Conservative mode
+robofinder -u https://example.com -r 1 --cooldown 30
 ```
 
 ---

@@ -4,11 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "robofinder"
-version = "0.1.0"
+version = "0.2.0"
 description = "Extract historical robots.txt paths via Wayback Machine – a recon tool for bug hunters"
 authors = [
     { name = "Spix0r", email = "spix0r@tuta.io" },
-    { name = "gnomegl" }
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
