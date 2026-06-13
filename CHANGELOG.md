@@ -9,6 +9,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.2.3] – 2026-06-13
+
+### Fixed
+- Fixed output header showing in silent mode
+
+---
+
 ## [0.2.1] – 2026-06-13
 
 ### Fixed

@@ -273,15 +273,19 @@ def extractParams(urls):
             log(args.debug, "error", f"Param extract error: {e}")
     return list(set(result))
 
-def format_txt(grouped_results):
+def format_txt(grouped_results, silent=False):
     lines = []
     for domain, data in grouped_results.items():
-        lines.append("=" * 70)
-        lines.append(f"[ {domain} ]  →  {len(data['paths'])} paths")
-        lines.append("=" * 70)
-        for path in data["paths"]:
-            lines.append(path)
-        lines.append("")
+        if silent:
+            for path in data["paths"]:
+                lines.append(path)
+        else:
+            lines.append("=" * 70)
+            lines.append(f"[ {domain} ]  →  {len(data['paths'])} paths")
+            lines.append("=" * 70)
+            for path in data["paths"]:
+                lines.append(path)
+            lines.append("")
     return "\n".join(lines)
 
 def format_json(grouped_results):
@@ -368,11 +372,12 @@ def main():
             if args.p:
                 grouped_results[domain]["paths"] = extractParams(grouped_results[domain]["paths"])
 
+    silent = args.silent
     # ====================== Output Handling ======================
     if args.output is True:
         # -o with no value → terminal
         if args.format in ['txt', 'both']:
-            print(format_txt(grouped_results))
+            print(format_txt(grouped_results, silent))
         if args.format in ['json', 'both']:
             print(format_json(grouped_results))
     elif args.output:
@@ -398,7 +403,7 @@ def main():
     else:
         # no -o → terminal
         if args.format in ['txt', 'both']:
-            print(format_txt(grouped_results))
+            print(format_txt(grouped_results, silent))
         if args.format in ['json', 'both']:
             print(format_json(grouped_results))
 
