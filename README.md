@@ -1,15 +1,23 @@
 <h1 align="center">Robofinder</h1>
 
 <p align="center">
-  Uncover hidden endpoints by mining every historical <code>robots.txt</code> snapshot from the Wayback Machine.
+  <img src="https://img.shields.io/pypi/v/robofinder?color=blue" alt="PyPI">
+  <img src="https://img.shields.io/pypi/dm/robofinder" alt="Downloads">
+  <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
+  <img src="https://img.shields.io/github/license/Spix0r/robofinder" alt="License">
+  <img src="https://img.shields.io/github/stars/Spix0r/robofinder?style=social" alt="Stars">
 </p>
 
+<pre align="center">
+    ____        __          _____           __         
+   / __ \____  / /_  ____  / __(_)___  ____/ /__  _____
+  / /_/ / __ \/ __ \/ __ \/ /_/ / __ \/ __  / _ \/ ___/
+ / _, _/ /_/ / /_/ / /_/ / __/ / / / / /_/ /  __/ /    
+/_/ |_|\____/_____/\____/_/ /_/_/ /_/\____/\___/_/
+</pre>
+
 <p align="center">
-  <a href="https://pypi.org/project/robofinder/"><img src="https://img.shields.io/pypi/v/robofinder?color=blue" alt="PyPI"></a>
-  <a href="https://pypi.org/project/robofinder/"><img src="https://img.shields.io/pypi/dm/robofinder" alt="Downloads"></a>
-  <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Spix0r/robofinder" alt="License"></a>
-  <a href="https://github.com/Spix0r/robofinder/stargazers"><img src="https://img.shields.io/github/stars/Spix0r/robofinder?style=social" alt="Stars"></a>
+  Uncover hidden endpoints by mining every historical <code>robots.txt</code> snapshot from the Wayback Machine.
 </p>
 
 ---
