@@ -9,6 +9,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.2.1] – 2026-06-13
+
+### Fixed
+- Just fixed a UI issue about showing the banner and `--silent` switch
+
+---
+
 ## [0.2.0] – 2026-06-13
 
 ### Added
