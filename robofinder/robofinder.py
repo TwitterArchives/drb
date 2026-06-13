@@ -1,6 +1,6 @@
 from requests.sessions import Session
 from threading import local, Lock
-import signal, validators, re, datetime, argparse, time, requests, random
+import signal, sys, validators, re, datetime, argparse, time, requests, random
 from collections import defaultdict
 from urllib.parse import urlparse, parse_qs
 import os
@@ -125,10 +125,7 @@ def setup_argparse():
     config.add_argument("--debug", action="store_true", default=False,
                         help='Enable verbose debug output')
     
-    args = parser.parse_args()
-    if not args.silent:
-        showBanner()
-    return args
+    return parser.parse_args()
 
 def extract(response):
     robots = []
@@ -309,6 +306,8 @@ def save_results_by_domain(grouped_results, output_dir="output"):
 def main():
     global args, rate_limiter
     start = time.time()
+    if '--silent' not in sys.argv and '-s' not in sys.argv:
+        showBanner()
     args = setup_argparse()
     rate_limiter = TokenBucketRateLimiter(args.rate_limit)
 
