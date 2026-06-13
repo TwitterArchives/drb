@@ -62,8 +62,8 @@ robofinder -u https://example.com
 robofinder -u https://example.com -c
 
 # Pipe straight into httpx or nuclei
-robofinder -u domains.txt -c | httpx -silent -mc 200
-robofinder -u https://example.com -c | nuclei -t exposures/
+robofinder -u domains.txt -c -s | httpx -silent -mc 200
+robofinder -u https://example.com -c -s | nuclei -t exposures/
 ```
 
 ---
